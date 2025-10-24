@@ -1,12 +1,13 @@
 import { Image } from 'expo-image';
 import { Stack, router } from 'expo-router';
 import { Play } from 'lucide-react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Dimensions,
   FlatList,
   Platform,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -19,8 +20,21 @@ const COLUMN_COUNT = 2;
 const SPACING = 12;
 const ITEM_SIZE = (width - SPACING * (COLUMN_COUNT + 1)) / COLUMN_COUNT;
 
+type TabType = 'Palace' | 'Festivals' | 'History' | 'Heritage';
+
+const TABS: { id: TabType; title: string }[] = [
+  { id: 'Palace', title: 'Palace' },
+  { id: 'Festivals', title: 'Festivals' },
+  { id: 'History', title: 'History' },
+  { id: 'Heritage', title: 'Heritage' },
+];
+
 export default function PalaceScreen() {
-  const palaceMedia = MEDIA_DATA.filter((item) => item.category === 'Palace');
+  const [selectedTab, setSelectedTab] = useState<TabType>('Palace');
+
+  const filteredMedia = MEDIA_DATA.filter(
+    (item) => item.category === selectedTab
+  );
 
   const renderMediaItem = ({ item }: { item: MediaItem }) => (
     <Pressable
@@ -67,12 +81,39 @@ export default function PalaceScreen() {
       <View style={styles.header}>
         <Text style={styles.headerTitle}>The Palace</Text>
         <Text style={styles.headerSubtitle}>
-          {palaceMedia.length} {palaceMedia.length === 1 ? 'item' : 'items'}
+          {filteredMedia.length} {filteredMedia.length === 1 ? 'item' : 'items'}
         </Text>
       </View>
 
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.tabsContainer}
+        style={styles.tabsScrollView}
+      >
+        {TABS.map((tab) => (
+          <Pressable
+            key={tab.id}
+            onPress={() => setSelectedTab(tab.id)}
+            style={[
+              styles.tab,
+              selectedTab === tab.id && styles.tabActive,
+            ]}
+          >
+            <Text
+              style={[
+                styles.tabText,
+                selectedTab === tab.id && styles.tabTextActive,
+              ]}
+            >
+              {tab.title}
+            </Text>
+          </Pressable>
+        ))}
+      </ScrollView>
+
       <FlatList
-        data={palaceMedia}
+        data={filteredMedia}
         renderItem={renderMediaItem}
         keyExtractor={(item) => item.id}
         numColumns={COLUMN_COUNT}
@@ -92,7 +133,7 @@ const styles = StyleSheet.create({
   header: {
     paddingTop: Platform.OS === 'ios' ? 60 : 40,
     paddingHorizontal: SPACING,
-    paddingBottom: 16,
+    paddingBottom: 12,
   },
   headerTitle: {
     fontSize: 34,
@@ -104,6 +145,31 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#999',
     marginTop: 4,
+  },
+  tabsScrollView: {
+    flexGrow: 0,
+    marginBottom: 8,
+  },
+  tabsContainer: {
+    paddingHorizontal: SPACING,
+    gap: 8,
+  },
+  tab: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    backgroundColor: '#1a1a1a',
+  },
+  tabActive: {
+    backgroundColor: '#fff',
+  },
+  tabText: {
+    fontSize: 14,
+    fontWeight: '600' as const,
+    color: '#999',
+  },
+  tabTextActive: {
+    color: '#000',
   },
   gridContent: {
     padding: SPACING,

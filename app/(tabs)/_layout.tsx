@@ -1,6 +1,6 @@
 // template
 import { Tabs } from "expo-router";
-import { Building2, PartyPopper, BookOpen, Landmark, User } from "lucide-react-native";
+import { Images, Building2, Tv, ShoppingBag, User } from "lucide-react-native";
 import React from "react";
 
 export default function TabLayout() {
@@ -24,7 +24,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Gallery",
-          tabBarIcon: ({ color }) => <Building2 size={24} color={color} />,
+          tabBarIcon: ({ color }) => <Images size={24} color={color} />,
         }}
       />
       <Tabs.Screen
@@ -35,24 +35,17 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="festivals"
+        name="entertainment"
         options={{
-          title: "Festivals",
-          tabBarIcon: ({ color }) => <PartyPopper size={24} color={color} />,
+          title: "Entertainment",
+          tabBarIcon: ({ color }) => <Tv size={24} color={color} />,
         }}
       />
       <Tabs.Screen
-        name="history"
+        name="marketplace"
         options={{
-          title: "History",
-          tabBarIcon: ({ color }) => <BookOpen size={24} color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="heritage"
-        options={{
-          title: "Heritage",
-          tabBarIcon: ({ color }) => <Landmark size={24} color={color} />,
+          title: "Market Place",
+          tabBarIcon: ({ color }) => <ShoppingBag size={24} color={color} />,
         }}
       />
       <Tabs.Screen
@@ -64,6 +57,24 @@ export default function TabLayout() {
       />
       <Tabs.Screen
         name="videos"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="festivals"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="history"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="heritage"
         options={{
           href: null,
         }}
