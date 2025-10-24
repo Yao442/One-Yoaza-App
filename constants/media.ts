@@ -17,11 +17,10 @@ export const MEDIA_DATA: MediaItem[] = [
   },
   {
     id: '2',
-    type: 'video',
-    uri: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-    thumbnail: 'https://images.unsplash.com/photo-1585409677983-0f6c41ca9c3b?w=400',
-    title: 'Big Buck Bunny',
-    category: 'Animation',
+    type: 'image',
+    uri: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800',
+    title: 'Community Gathering',
+    category: 'Communities',
   },
   {
     id: '3',
@@ -39,11 +38,10 @@ export const MEDIA_DATA: MediaItem[] = [
   },
   {
     id: '5',
-    type: 'video',
-    uri: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-    thumbnail: 'https://images.unsplash.com/photo-1564349683136-77e08dba1ef7?w=400',
-    title: 'Elephants Dream',
-    category: 'Animation',
+    type: 'image',
+    uri: 'https://images.unsplash.com/photo-1523438885200-e635ba2c371e?w=800',
+    title: 'Traditional Chief',
+    category: 'Chiefs',
   },
   {
     id: '6',
@@ -61,11 +59,10 @@ export const MEDIA_DATA: MediaItem[] = [
   },
   {
     id: '8',
-    type: 'video',
-    uri: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-    thumbnail: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=400',
-    title: 'For Bigger Blazes',
-    category: 'Action',
+    type: 'image',
+    uri: 'https://images.unsplash.com/photo-1504893524553-b855bce32c67?w=800',
+    title: 'Wildlife Safari',
+    category: 'Wildlife',
   },
   {
     id: '9',
@@ -83,11 +80,10 @@ export const MEDIA_DATA: MediaItem[] = [
   },
   {
     id: '11',
-    type: 'video',
-    uri: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-    thumbnail: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400',
-    title: 'For Bigger Escapes',
-    category: 'Travel',
+    type: 'image',
+    uri: 'https://images.unsplash.com/photo-1516738901171-8eb4fc13bd20?w=800',
+    title: 'Community Market',
+    category: 'Communities',
   },
   {
     id: '12',
@@ -96,6 +92,34 @@ export const MEDIA_DATA: MediaItem[] = [
     title: 'Ocean Waves',
     category: 'Nature',
   },
+  {
+    id: '13',
+    type: 'image',
+    uri: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=800',
+    title: 'Traditional Leader',
+    category: 'Chiefs',
+  },
+  {
+    id: '14',
+    type: 'image',
+    uri: 'https://images.unsplash.com/photo-1564760055775-d63b17a55c44?w=800',
+    title: 'Elephant Herd',
+    category: 'Wildlife',
+  },
+  {
+    id: '15',
+    type: 'image',
+    uri: 'https://images.unsplash.com/photo-1526736220381-1b680c8d6600?w=800',
+    title: 'Village Life',
+    category: 'Communities',
+  },
+  {
+    id: '16',
+    type: 'image',
+    uri: 'https://images.unsplash.com/photo-1549366021-9f761d450615?w=800',
+    title: 'Lion Pride',
+    category: 'Wildlife',
+  },
 ];
 
-export const CATEGORIES = ['All', 'Nature', 'Travel', 'Urban', 'Animation', 'Action'];
+export const CATEGORIES = ['All', 'Communities', 'Chiefs', 'Urban', 'Travel', 'Nature', 'Wildlife'];
