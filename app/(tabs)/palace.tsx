@@ -20,13 +20,14 @@ const COLUMN_COUNT = 2;
 const SPACING = 12;
 const ITEM_SIZE = (width - SPACING * (COLUMN_COUNT + 1)) / COLUMN_COUNT;
 
-type TabType = 'Palace' | 'Festivals' | 'History' | 'Heritage';
+type TabType = 'Palace' | 'Festivals' | 'History' | 'Heritage' | 'The King';
 
 const TABS: { id: TabType; title: string }[] = [
   { id: 'Palace', title: 'Palace' },
   { id: 'Festivals', title: 'Festivals' },
   { id: 'History', title: 'History' },
   { id: 'Heritage', title: 'Heritage' },
+  { id: 'The King', title: 'The King' },
 ];
 
 export default function PalaceScreen() {
