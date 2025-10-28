@@ -20,7 +20,7 @@ export default publicProcedure
       password: z.string().min(6),
       firstName: z.string().min(1),
       lastName: z.string().min(1),
-      gender: z.enum(["male", "female", "other"]),
+      gender: z.enum(["male", "female"]),
     })
   )
   .mutation(async ({ input }) => {

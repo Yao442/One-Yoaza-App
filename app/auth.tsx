@@ -24,7 +24,7 @@ export default function AuthScreen() {
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [gender, setGender] = useState<'male' | 'female' | 'other'>('male');
+  const [gender, setGender] = useState<'male' | 'female'>('male');
 
   const handleSubmit = async () => {
     if (!email || !password) {
@@ -131,7 +131,7 @@ export default function AuthScreen() {
                     <View style={styles.inputContainer}>
                       <Text style={styles.label}>Gender</Text>
                       <View style={styles.genderContainer}>
-                        {(['male', 'female', 'other'] as const).map((g) => (
+                        {(['male', 'female'] as const).map((g) => (
                           <TouchableOpacity
                             key={g}
                             style={[
