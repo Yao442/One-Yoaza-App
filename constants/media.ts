@@ -120,6 +120,41 @@ export const MEDIA_DATA: MediaItem[] = [
     title: 'Lion Pride',
     category: 'Wildlife',
   },
+  {
+    id: '17',
+    type: 'image',
+    uri: 'https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=800',
+    title: 'Royal Palace',
+    category: 'Palace',
+  },
+  {
+    id: '18',
+    type: 'image',
+    uri: 'https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=800',
+    title: 'Festival Celebration',
+    category: 'Festivals',
+  },
+  {
+    id: '19',
+    type: 'image',
+    uri: 'https://images.unsplash.com/photo-1461360228754-6e81c478b882?w=800',
+    title: 'Historical Monument',
+    category: 'History',
+  },
+  {
+    id: '20',
+    type: 'image',
+    uri: 'https://images.unsplash.com/photo-1599582652399-9a92ce8ddfc6?w=800',
+    title: 'Heritage Site',
+    category: 'Heritage',
+  },
+  {
+    id: '21',
+    type: 'image',
+    uri: 'https://images.unsplash.com/photo-1560969184-10fe8719e047?w=800',
+    title: 'The King',
+    category: 'The King',
+  },
 ];
 
 export const CATEGORIES = ['All', 'Communities', 'Chiefs', 'Urban', 'Travel', 'Nature', 'Wildlife'];
