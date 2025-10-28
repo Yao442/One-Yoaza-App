@@ -1,5 +1,5 @@
 import { Stack } from 'expo-router';
-import { Camera, Heart, Settings, Video } from 'lucide-react-native';
+import { Camera, Heart, Settings, Video, LogOut } from 'lucide-react-native';
 import React from 'react';
 import {
   Pressable,
@@ -7,16 +7,30 @@ import {
   StyleSheet,
   Text,
   View,
+  Alert,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { MEDIA_DATA } from '@/constants/media';
+import { useAuth } from '@/contexts/auth';
 
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
+  const { user, logout } = useAuth();
   const userVideos = MEDIA_DATA.filter((item) => item.type === 'video').length;
   const userPhotos = MEDIA_DATA.filter((item) => item.type === 'image').length;
   const totalMedia = MEDIA_DATA.length;
+
+  const handleLogout = () => {
+    Alert.alert(
+      'Sign Out',
+      'Are you sure you want to sign out?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Sign Out', style: 'destructive', onPress: logout },
+      ]
+    );
+  };
 
   const stats = [
     { label: 'Media', value: totalMedia },
@@ -47,12 +61,14 @@ export default function ProfileScreen() {
         <View style={styles.profileSection}>
           <View style={styles.avatarContainer}>
             <View style={styles.avatar}>
-              <Text style={styles.avatarText}>JD</Text>
+              <Text style={styles.avatarText}>
+                {user?.firstName?.[0]}{user?.lastName?.[0]}
+              </Text>
             </View>
           </View>
 
-          <Text style={styles.userName}>John Doe</Text>
-          <Text style={styles.userEmail}>john.doe@example.com</Text>
+          <Text style={styles.userName}>{user?.firstName} {user?.lastName}</Text>
+          <Text style={styles.userEmail}>{user?.email}</Text>
 
           <View style={styles.statsContainer}>
             {stats.map((stat, index) => (
@@ -117,8 +133,11 @@ export default function ProfileScreen() {
             <Text style={styles.menuText}>Storage & Data</Text>
           </Pressable>
 
-          <Pressable style={[styles.menuItem, styles.menuItemLast]}>
-            <Text style={[styles.menuText, styles.menuTextDanger]}>Sign Out</Text>
+          <Pressable style={[styles.menuItem, styles.menuItemLast]} onPress={handleLogout}>
+            <View style={styles.menuItemContent}>
+              <Text style={[styles.menuText, styles.menuTextDanger]}>Sign Out</Text>
+              <LogOut size={20} color="#E94B3C" />
+            </View>
           </Pressable>
         </View>
 
@@ -268,6 +287,11 @@ const styles = StyleSheet.create({
   },
   menuTextDanger: {
     color: '#E94B3C',
+  },
+  menuItemContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   version: {
     fontSize: 13,
