@@ -1,17 +1,6 @@
-import Database from "better-sqlite3";
-import { createTables, User } from "./schema";
-import path from "path";
-import fs from "fs";
+import { User } from "./schema";
 
-const dataDir = path.join(process.cwd(), "data");
-if (!fs.existsSync(dataDir)) {
-  fs.mkdirSync(dataDir, { recursive: true });
-}
-
-const dbPath = path.join(dataDir, "app.db");
-const db = new Database(dbPath);
-
-db.exec(createTables);
+const users: Map<string, User> = new Map();
 
 const seedTestUser = () => {
   const testUser = userDb.findByEmail('test@example.com');
@@ -26,82 +15,68 @@ const seedTestUser = () => {
       gender: 'male',
     });
     console.log('Test user seeded successfully');
+    console.log('🔑 Login credentials:');
+    console.log('   Email: test@example.com');
+    console.log('   Password: password123');
   }
 };
 
 export const userDb = {
   findByEmail: (email: string): User | undefined => {
-    const stmt = db.prepare("SELECT * FROM users WHERE email = ?");
-    return stmt.get(email) as User | undefined;
+    for (const user of users.values()) {
+      if (user.email === email) {
+        return user;
+      }
+    }
+    return undefined;
   },
 
   findById: (id: string): User | undefined => {
-    const stmt = db.prepare("SELECT * FROM users WHERE id = ?");
-    return stmt.get(id) as User | undefined;
+    return users.get(id);
   },
 
   create: (user: Omit<User, "createdAt" | "updatedAt">): User => {
     const now = new Date().toISOString();
-    const stmt = db.prepare(`
-      INSERT INTO users (id, email, firstName, lastName, gender, password, createdAt, updatedAt)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `);
-
-    stmt.run(
-      user.id,
-      user.email,
-      user.firstName,
-      user.lastName,
-      user.gender,
-      user.password,
-      now,
-      now
-    );
-
-    return {
+    const newUser: User = {
       ...user,
       createdAt: now,
       updatedAt: now,
     };
+
+    users.set(user.id, newUser);
+    console.log(`✅ User created: ${user.email} (ID: ${user.id})`);
+    return newUser;
   },
 
   update: (
     id: string,
     updates: Partial<Omit<User, "id" | "createdAt" | "updatedAt">>
   ): User | undefined => {
-    const user = userDb.findById(id);
+    const user = users.get(id);
     if (!user) return undefined;
 
     const now = new Date().toISOString();
-    const fields = Object.keys(updates);
-    const values = Object.values(updates);
+    const updatedUser: User = {
+      ...user,
+      ...updates,
+      updatedAt: now,
+    };
 
-    if (fields.length === 0) return user;
-
-    const setClause = fields.map((field) => `${field} = ?`).join(", ");
-    const stmt = db.prepare(`
-      UPDATE users 
-      SET ${setClause}, updatedAt = ?
-      WHERE id = ?
-    `);
-
-    stmt.run(...values, now, id);
-
-    return userDb.findById(id);
+    users.set(id, updatedUser);
+    return updatedUser;
   },
 
   delete: (id: string): boolean => {
-    const stmt = db.prepare("DELETE FROM users WHERE id = ?");
-    const result = stmt.run(id);
-    return result.changes > 0;
+    return users.delete(id);
   },
 
   list: (): User[] => {
-    const stmt = db.prepare("SELECT * FROM users ORDER BY createdAt DESC");
-    return stmt.all() as User[];
+    return Array.from(users.values()).sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
   },
 };
 
 seedTestUser();
 
-export default db;
+console.log('✅ In-memory database initialized');
