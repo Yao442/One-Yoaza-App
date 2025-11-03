@@ -13,6 +13,22 @@ const db = new Database(dbPath);
 
 db.exec(createTables);
 
+const seedTestUser = () => {
+  const testUser = userDb.findByEmail('test@example.com');
+  if (!testUser) {
+    console.log('Seeding test user...');
+    userDb.create({
+      id: 'test-user-id',
+      email: 'test@example.com',
+      password: 'password123',
+      firstName: 'Test',
+      lastName: 'User',
+      gender: 'male',
+    });
+    console.log('Test user seeded successfully');
+  }
+};
+
 export const userDb = {
   findByEmail: (email: string): User | undefined => {
     const stmt = db.prepare("SELECT * FROM users WHERE email = ?");
@@ -85,5 +101,7 @@ export const userDb = {
     return stmt.all() as User[];
   },
 };
+
+seedTestUser();
 
 export default db;

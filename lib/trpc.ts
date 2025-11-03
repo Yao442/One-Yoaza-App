@@ -24,31 +24,46 @@ export const trpcClient = trpc.createClient({
           'content-type': 'application/json',
         };
       },
-      async fetch(url, options) {
+      fetch(url, options) {
         console.log('🌐 tRPC Request:', url);
         console.log('📦 Request options:', JSON.stringify({
           method: options?.method,
           headers: options?.headers,
         }, null, 2));
         
-        try {
-          const response = await fetch(url, options);
-          console.log('📡 Response status:', response.status);
-          console.log('📋 Response headers:', JSON.stringify(Object.fromEntries(response.headers.entries()), null, 2));
-          
-          const clonedResponse = response.clone();
-          const text = await clonedResponse.text();
-          console.log('📄 Response body preview:', text.substring(0, 500));
-          
-          if (!response.ok) {
-            console.error('❌ Response not OK:', response.status, response.statusText);
-          }
-          
-          return response;
-        } catch (error) {
-          console.error('❌ Fetch error:', error);
-          throw error;
-        }
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000);
+        
+        return fetch(url, {
+          ...options,
+          signal: controller.signal,
+        })
+          .then((response) => {
+            clearTimeout(timeoutId);
+            console.log('📡 Response status:', response.status);
+            console.log('📋 Response headers:', JSON.stringify(Object.fromEntries(response.headers.entries()), null, 2));
+            
+            return response.clone().text().then(text => {
+              console.log('📄 Response body preview:', text.substring(0, 500));
+              
+              if (!response.ok) {
+                console.error('❌ Response not OK:', response.status, response.statusText);
+                console.error('❌ Response body:', text);
+              }
+              
+              return response;
+            });
+          })
+          .catch((error) => {
+            clearTimeout(timeoutId);
+            console.error('❌ Fetch error:', error);
+            console.error('❌ Error details:', {
+              name: error.name,
+              message: error.message,
+              stack: error.stack,
+            });
+            throw error;
+          });
       },
     }),
   ],

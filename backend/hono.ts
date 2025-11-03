@@ -13,11 +13,35 @@ app.use(
   trpcServer({
     router: appRouter,
     createContext,
+    onError({ error, path }) {
+      console.error(`❌ tRPC Error on ${path}:`, error);
+    },
   })
 );
 
 app.get("/", (c) => {
   return c.json({ status: "ok", message: "API is running" });
+});
+
+app.get("/api/health", (c) => {
+  return c.json({ 
+    status: "ok", 
+    message: "API is healthy",
+    timestamp: new Date().toISOString(),
+  });
+});
+
+app.onError((err, c) => {
+  console.error('❌ Hono Error:', err);
+  return c.json(
+    {
+      error: {
+        message: err.message,
+        stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+      },
+    },
+    500
+  );
 });
 
 export default app;
