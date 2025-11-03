@@ -1,7 +1,7 @@
 import { publicProcedure } from "@/backend/trpc/create-context";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import { users } from "../signup/route";
+import { userDb } from "@/backend/db";
 
 export default publicProcedure
   .input(
@@ -14,7 +14,7 @@ export default publicProcedure
       const decoded = Buffer.from(input.token, "base64").toString("utf-8");
       const [userId] = decoded.split(":");
 
-      const user = users.find((u) => u.id === userId);
+      const user = userDb.findById(userId);
 
       if (!user) {
         throw new TRPCError({

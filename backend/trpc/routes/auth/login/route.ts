@@ -1,7 +1,7 @@
 import { publicProcedure } from "@/backend/trpc/create-context";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import { users } from "../signup/route";
+import { userDb } from "@/backend/db";
 
 export default publicProcedure
   .input(
@@ -11,11 +11,9 @@ export default publicProcedure
     })
   )
   .mutation(async ({ input }) => {
-    const user = users.find(
-      (u) => u.email === input.email && u.password === input.password
-    );
+    const user = userDb.findByEmail(input.email);
 
-    if (!user) {
+    if (!user || user.password !== input.password) {
       throw new TRPCError({
         code: "UNAUTHORIZED",
         message: "Invalid email or password",

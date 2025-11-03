@@ -1,17 +1,7 @@
 import { publicProcedure } from "@/backend/trpc/create-context";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-
-interface User {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  gender: string;
-  password: string;
-}
-
-let users: User[] = [];
+import { userDb } from "@/backend/db";
 
 export default publicProcedure
   .input(
@@ -24,7 +14,7 @@ export default publicProcedure
     })
   )
   .mutation(async ({ input }) => {
-    const existingUser = users.find((u) => u.email === input.email);
+    const existingUser = userDb.findByEmail(input.email);
 
     if (existingUser) {
       throw new TRPCError({
@@ -33,16 +23,14 @@ export default publicProcedure
       });
     }
 
-    const newUser: User = {
+    const newUser = userDb.create({
       id: Math.random().toString(36).substr(2, 9),
       email: input.email,
       firstName: input.firstName,
       lastName: input.lastName,
       gender: input.gender,
       password: input.password,
-    };
-
-    users.push(newUser);
+    });
 
     const token = Buffer.from(`${newUser.id}:${newUser.email}`).toString(
       "base64"
@@ -59,5 +47,3 @@ export default publicProcedure
       },
     };
   });
-
-export { users };
