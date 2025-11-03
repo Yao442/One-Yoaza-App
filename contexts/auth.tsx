@@ -1,6 +1,7 @@
 import createContextHook from '@nkzw/create-context-hook';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { encode as base64Encode, decode as base64Decode } from 'base-64';
 
 interface User {
   id: string;
@@ -29,7 +30,7 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
         const usersData = await AsyncStorage.getItem(USERS_KEY);
         const users: StoredUser[] = usersData ? JSON.parse(usersData) : [];
         
-        const userId = Buffer.from(storedToken, 'base64').toString('utf-8').split(':')[0];
+        const userId = base64Decode(storedToken).split(':')[0];
         const foundUser = users.find(u => u.id === userId);
         
         if (foundUser) {
@@ -68,7 +69,7 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
         return { success: false, error: 'Invalid email or password' };
       }
       
-      const newToken = Buffer.from(`${foundUser.id}:${foundUser.email}`).toString('base64');
+      const newToken = base64Encode(`${foundUser.id}:${foundUser.email}`);
       await AsyncStorage.setItem(AUTH_TOKEN_KEY, newToken);
       
       setToken(newToken);
@@ -119,7 +120,7 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
       users.push(newUser);
       await AsyncStorage.setItem(USERS_KEY, JSON.stringify(users));
       
-      const newToken = Buffer.from(`${newUser.id}:${newUser.email}`).toString('base64');
+      const newToken = base64Encode(`${newUser.id}:${newUser.email}`);
       await AsyncStorage.setItem(AUTH_TOKEN_KEY, newToken);
       
       setToken(newToken);
