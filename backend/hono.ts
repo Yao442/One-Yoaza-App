@@ -4,20 +4,30 @@ import { cors } from "hono/cors";
 import { appRouter } from "./trpc/app-router";
 import { createContext } from "./trpc/create-context";
 
+console.log('🚀 Starting backend server...');
+
 const app = new Hono();
 
 app.use("*", cors());
 
-app.use(
-  "/api/trpc/*",
-  trpcServer({
-    router: appRouter,
-    createContext,
-    onError({ error, path }) {
-      console.error(`❌ tRPC Error on ${path}:`, error);
-    },
-  })
-);
+console.log('✅ CORS middleware registered');
+
+try {
+  app.use(
+    "/api/trpc/*",
+    trpcServer({
+      router: appRouter,
+      createContext,
+      onError({ error, path }) {
+        console.error(`❌ tRPC Error on ${path}:`, error);
+      },
+    })
+  );
+  console.log('✅ tRPC server registered at /api/trpc/*');
+} catch (error) {
+  console.error('❌ Failed to register tRPC server:', error);
+  throw error;
+}
 
 app.get("/", (c) => {
   return c.json({ status: "ok", message: "API is running" });
@@ -43,5 +53,7 @@ app.onError((err, c) => {
     500
   );
 });
+
+console.log('✅ Backend server configured successfully');
 
 export default app;

@@ -1,5 +1,7 @@
 import { User } from "./schema";
 
+console.log('🗄️  Initializing in-memory database...');
+
 const users: Map<string, User> = new Map();
 
 const userDb = {
@@ -58,23 +60,27 @@ const userDb = {
   },
 };
 
-const testUser = userDb.findByEmail('test@example.com');
-if (!testUser) {
-  console.log('Seeding test user...');
-  userDb.create({
-    id: 'test-user-id',
-    email: 'test@example.com',
-    password: 'password123',
-    firstName: 'Test',
-    lastName: 'User',
-    gender: 'male',
-  });
-  console.log('Test user seeded successfully');
-  console.log('🔑 Login credentials:');
-  console.log('   Email: test@example.com');
-  console.log('   Password: password123');
+try {
+  const testUser = userDb.findByEmail('test@example.com');
+  if (!testUser) {
+    console.log('🌱 Seeding test user...');
+    userDb.create({
+      id: 'test-user-id',
+      email: 'test@example.com',
+      password: 'password123',
+      firstName: 'Test',
+      lastName: 'User',
+      gender: 'male',
+    });
+    console.log('✅ Test user seeded successfully');
+    console.log('🔑 Login credentials:');
+    console.log('   Email: test@example.com');
+    console.log('   Password: password123');
+  }
+  console.log('✅ In-memory database initialized');
+} catch (error) {
+  console.error('❌ Failed to initialize database:', error);
+  throw error;
 }
-
-console.log('✅ In-memory database initialized');
 
 export { userDb };

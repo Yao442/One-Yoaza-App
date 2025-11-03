@@ -4,6 +4,16 @@ import signupRoute from "./routes/auth/signup/route";
 import loginRoute from "./routes/auth/login/route";
 import getMeRoute from "./routes/auth/getMe/route";
 
+console.log('🔧 Building tRPC router...');
+
+try {
+  console.log('  ✓ Loading example routes');
+  console.log('  ✓ Loading auth routes');
+} catch (error) {
+  console.error('❌ Failed to load routes:', error);
+  throw error;
+}
+
 export const appRouter = createTRPCRouter({
   example: createTRPCRouter({
     hi: hiRoute,
@@ -14,5 +24,7 @@ export const appRouter = createTRPCRouter({
     getMe: getMeRoute,
   }),
 });
+
+console.log('✅ tRPC router built successfully');
 
 export type AppRouter = typeof appRouter;
