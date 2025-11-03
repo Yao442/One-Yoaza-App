@@ -16,10 +16,21 @@ import { useAuth } from '@/contexts/auth';
 
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
-  const { user, logout } = useAuth();
+  const { user, logout, isLoading } = useAuth();
   const userVideos = MEDIA_DATA.filter((item) => item.type === 'video').length;
   const userPhotos = MEDIA_DATA.filter((item) => item.type === 'image').length;
   const totalMedia = MEDIA_DATA.length;
+
+  if (isLoading || !user) {
+    return (
+      <View style={styles.container}>
+        <Stack.Screen options={{ headerShown: false }} />
+        <View style={styles.loadingContainer}>
+          <Text style={styles.loadingText}>Loading...</Text>
+        </View>
+      </View>
+    );
+  }
 
   const handleLogout = () => {
     Alert.alert(
@@ -62,13 +73,13 @@ export default function ProfileScreen() {
           <View style={styles.avatarContainer}>
             <View style={styles.avatar}>
               <Text style={styles.avatarText}>
-                {user?.firstName?.[0]}{user?.lastName?.[0]}
+                {user.firstName[0]}{user.lastName[0]}
               </Text>
             </View>
           </View>
 
-          <Text style={styles.userName}>{user?.firstName} {user?.lastName}</Text>
-          <Text style={styles.userEmail}>{user?.email}</Text>
+          <Text style={styles.userName}>{user.firstName} {user.lastName}</Text>
+          <Text style={styles.userEmail}>{user.email}</Text>
 
           <View style={styles.statsContainer}>
             {stats.map((stat, index) => (
@@ -298,5 +309,14 @@ const styles = StyleSheet.create({
     color: '#666',
     textAlign: 'center',
     marginTop: 32,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    fontSize: 16,
+    color: '#999',
   },
 });
