@@ -31,16 +31,8 @@ export const trpcClient = trpc.createClient({
           headers: options?.headers,
         }, null, 2));
         
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 30000);
-        
         try {
-          const response = await fetch(url, {
-            ...options,
-            signal: controller.signal,
-          });
-          clearTimeout(timeoutId);
-          
+          const response = await fetch(url, options);
           console.log('📡 Response status:', response.status);
           console.log('📋 Response headers:', JSON.stringify(Object.fromEntries(response.headers.entries()), null, 2));
           
@@ -50,16 +42,10 @@ export const trpcClient = trpc.createClient({
           
           if (!response.ok) {
             console.error('❌ Response not OK:', response.status, response.statusText);
-            console.error('❌ Response body:', text);
           }
           
           return response;
         } catch (error) {
-          clearTimeout(timeoutId);
-          if (error instanceof Error && error.name === 'AbortError') {
-            console.error('❌ Request timeout after 30 seconds');
-            throw new Error('Request timeout - the server is not responding');
-          }
           console.error('❌ Fetch error:', error);
           throw error;
         }
