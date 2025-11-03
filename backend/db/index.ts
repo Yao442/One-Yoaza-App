@@ -2,7 +2,7 @@ import { User } from "./schema";
 
 const users: Map<string, User> = new Map();
 
-export const userDb = {
+const userDb = {
   findByEmail: (email: string): User | undefined => {
     for (const user of users.values()) {
       if (user.email === email) {
@@ -76,3 +76,5 @@ if (!testUser) {
 }
 
 console.log('✅ In-memory database initialized');
+
+export { userDb };
