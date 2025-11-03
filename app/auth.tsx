@@ -104,6 +104,13 @@ export default function AuthScreen() {
                     ? 'Sign in to continue'
                     : 'Sign up to get started'}
                 </Text>
+                {isLogin && (
+                  <View style={styles.testCredentials}>
+                    <Text style={styles.testCredentialsTitle}>Test Account:</Text>
+                    <Text style={styles.testCredentialsText}>Email: test@example.com</Text>
+                    <Text style={styles.testCredentialsText}>Password: password123</Text>
+                  </View>
+                )}
               </View>
 
               <View style={styles.form}>
@@ -335,5 +342,26 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#fff',
     textDecorationLine: 'underline',
+  },
+  testCredentials: {
+    marginTop: 20,
+    padding: 12,
+    backgroundColor: 'rgba(0,0,0,0.2)',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.3)',
+  },
+  testCredentialsTitle: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#fff',
+    marginBottom: 6,
+    textAlign: 'center',
+  },
+  testCredentialsText: {
+    fontSize: 11,
+    color: 'rgba(255,255,255,0.9)',
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+    textAlign: 'center',
   },
 });
