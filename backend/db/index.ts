@@ -11,42 +11,86 @@ if (!fs.existsSync(dataDir)) {
 const dbPath = path.join(dataDir, "app.db");
 const db = new Database(dbPath);
 
+console.log('[DB] Initializing database at:', dbPath);
 db.exec(createTables);
 
-export const userDb = {
-  findByEmail: (email: string): User | undefined => {
-    const stmt = db.prepare("SELECT * FROM users WHERE email = ?");
-    return stmt.get(email) as User | undefined;
-  },
-
-  findById: (id: string): User | undefined => {
-    const stmt = db.prepare("SELECT * FROM users WHERE id = ?");
-    return stmt.get(id) as User | undefined;
-  },
-
-  create: (user: Omit<User, "createdAt" | "updatedAt">): User => {
-    const now = new Date().toISOString();
+const testUserEmail = 'test@example.com';
+const existingTestUser = db.prepare('SELECT * FROM users WHERE email = ?').get(testUserEmail);
+if (!existingTestUser) {
+  console.log('[DB] Creating test user...');
+  try {
     const stmt = db.prepare(`
       INSERT INTO users (id, email, firstName, lastName, gender, password, createdAt, updatedAt)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `);
-
+    const now = new Date().toISOString();
     stmt.run(
-      user.id,
-      user.email,
-      user.firstName,
-      user.lastName,
-      user.gender,
-      user.password,
+      'test-user-123',
+      testUserEmail,
+      'Test',
+      'User',
+      'male',
+      'password123',
       now,
       now
     );
+    console.log('[DB] Test user created successfully');
+  } catch (error) {
+    console.error('[DB] Error creating test user:', error);
+  }
+} else {
+  console.log('[DB] Test user already exists');
+}
 
-    return {
-      ...user,
-      createdAt: now,
-      updatedAt: now,
-    };
+export const userDb = {
+  findByEmail: (email: string): User | undefined => {
+    try {
+      const stmt = db.prepare("SELECT * FROM users WHERE email = ?");
+      return stmt.get(email) as User | undefined;
+    } catch (error) {
+      console.error('[DB] Error finding user by email:', error);
+      throw new Error('Database error while finding user by email');
+    }
+  },
+
+  findById: (id: string): User | undefined => {
+    try {
+      const stmt = db.prepare("SELECT * FROM users WHERE id = ?");
+      return stmt.get(id) as User | undefined;
+    } catch (error) {
+      console.error('[DB] Error finding user by id:', error);
+      throw new Error('Database error while finding user by id');
+    }
+  },
+
+  create: (user: Omit<User, "createdAt" | "updatedAt">): User => {
+    try {
+      const now = new Date().toISOString();
+      const stmt = db.prepare(`
+        INSERT INTO users (id, email, firstName, lastName, gender, password, createdAt, updatedAt)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `);
+
+      stmt.run(
+        user.id,
+        user.email,
+        user.firstName,
+        user.lastName,
+        user.gender,
+        user.password,
+        now,
+        now
+      );
+
+      return {
+        ...user,
+        createdAt: now,
+        updatedAt: now,
+      };
+    } catch (error) {
+      console.error('[DB] Error creating user:', error);
+      throw new Error('Database error while creating user');
+    }
   },
 
   update: (
