@@ -14,36 +14,54 @@ export default publicProcedure
     })
   )
   .mutation(async ({ input }) => {
-    const existingUser = userDb.findByEmail(input.email);
+    try {
+      console.log('Signup route: received input', input);
+      
+      const existingUser = userDb.findByEmail(input.email);
+      console.log('Signup route: checked existing user', existingUser);
 
-    if (existingUser) {
+      if (existingUser) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "User with this email already exists",
+        });
+      }
+
+      const newUser = userDb.create({
+        id: Math.random().toString(36).substr(2, 9),
+        email: input.email,
+        firstName: input.firstName,
+        lastName: input.lastName,
+        gender: input.gender,
+        password: input.password,
+      });
+      console.log('Signup route: created user', { id: newUser.id, email: newUser.email });
+
+      const token = Buffer.from(`${newUser.id}:${newUser.email}`).toString(
+        "base64"
+      );
+
+      const response = {
+        token,
+        user: {
+          id: newUser.id,
+          email: newUser.email,
+          firstName: newUser.firstName,
+          lastName: newUser.lastName,
+          gender: newUser.gender,
+        },
+      };
+      
+      console.log('Signup route: returning response');
+      return response;
+    } catch (error) {
+      console.error('Signup route error:', error);
+      if (error instanceof TRPCError) {
+        throw error;
+      }
       throw new TRPCError({
-        code: "CONFLICT",
-        message: "User with this email already exists",
+        code: "INTERNAL_SERVER_ERROR",
+        message: error instanceof Error ? error.message : "Failed to create user",
       });
     }
-
-    const newUser = userDb.create({
-      id: Math.random().toString(36).substr(2, 9),
-      email: input.email,
-      firstName: input.firstName,
-      lastName: input.lastName,
-      gender: input.gender,
-      password: input.password,
-    });
-
-    const token = Buffer.from(`${newUser.id}:${newUser.email}`).toString(
-      "base64"
-    );
-
-    return {
-      token,
-      user: {
-        id: newUser.id,
-        email: newUser.email,
-        firstName: newUser.firstName,
-        lastName: newUser.lastName,
-        gender: newUser.gender,
-      },
-    };
   });

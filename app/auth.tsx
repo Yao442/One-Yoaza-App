@@ -44,6 +44,7 @@ export default function AuthScreen() {
       if (isLogin) {
         result = await login(email, password);
       } else {
+        console.log('Attempting signup with data:', { email, firstName, lastName, gender });
         result = await signup({
           email,
           password,
@@ -51,12 +52,16 @@ export default function AuthScreen() {
           lastName,
           gender,
         });
+        console.log('Signup result:', result);
       }
 
       if (!result.success) {
         Alert.alert('Error', result.error || 'Something went wrong');
+        setIsLoading(false);
       }
-    } finally {
+    } catch (error: any) {
+      console.error('Submit error:', error);
+      Alert.alert('Error', error.message || 'An unexpected error occurred');
       setIsLoading(false);
     }
   };

@@ -60,19 +60,19 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
     password: string;
     firstName: string;
     lastName: string;
-    gender: string;
+    gender: 'male' | 'female';
   }) => {
     try {
-      const response = await trpcClient.auth.signup.mutate({
-        ...data,
-        gender: data.gender as 'male' | 'female' | 'other',
-      });
+      console.log('Signup context: sending request with data', data);
+      const response = await trpcClient.auth.signup.mutate(data);
+      console.log('Signup context: received response', response);
       await AsyncStorage.setItem(AUTH_TOKEN_KEY, response.token);
       setToken(response.token);
       setUser(response.user);
       return { success: true };
     } catch (error: any) {
       console.error('Signup error:', error);
+      console.error('Signup error details:', JSON.stringify(error, null, 2));
       return { success: false, error: error.message || 'Signup failed' };
     }
   }, []);
