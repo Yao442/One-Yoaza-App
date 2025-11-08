@@ -10,7 +10,7 @@ import {
   View,
 } from 'react-native';
 
-type TabType = 'Radios' | 'TV' | 'Music';
+type TabType = 'Radios' | 'TV' | 'Music' | 'Your Library';
 
 type MusicCategory = 'Highlife' | 'Hiplife' | 'Gospel';
 
@@ -24,6 +24,7 @@ const TABS: { id: TabType; title: string }[] = [
   { id: 'Radios', title: 'Radios' },
   { id: 'TV', title: 'TV' },
   { id: 'Music', title: 'Music' },
+  { id: 'Your Library', title: 'Your Library' },
 ];
 
 const SPACING = 12;
@@ -49,10 +50,6 @@ export default function EntertainmentScreen() {
             </Pressable>
           </View>
         </View>
-        <Pressable style={styles.libraryButton}>
-          <Library size={20} color="#fff" strokeWidth={2} />
-          <Text style={styles.libraryText}>Your Library</Text>
-        </Pressable>
       </View>
 
       <ScrollView
@@ -138,6 +135,15 @@ export default function EntertainmentScreen() {
             </View>
           </View>
         )}
+        {selectedTab === 'Your Library' && (
+          <View style={styles.emptyState}>
+            <Library size={64} color="#666" strokeWidth={1.5} />
+            <Text style={styles.emptyTitle}>Your Library</Text>
+            <Text style={styles.emptySubtitle}>
+              Your saved music, radios, and TV shows
+            </Text>
+          </View>
+        )}
       </ScrollView>
     </View>
   );
@@ -175,17 +181,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  libraryButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    paddingVertical: 8,
-  },
-  libraryText: {
-    fontSize: 16,
-    fontWeight: '600' as const,
-    color: '#fff',
-  },
+
   tabsScrollView: {
     flexGrow: 0,
     marginBottom: 16,
