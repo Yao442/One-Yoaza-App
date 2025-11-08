@@ -21,12 +21,9 @@ const SPACING = 12;
 const ITEM_SIZE = (width - SPACING * (COLUMN_COUNT + 1)) / COLUMN_COUNT;
 
 export default function HomeScreen() {
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [selectedCategory, setSelectedCategory] = useState<string>('Communities');
 
-  const filteredMedia =
-    selectedCategory === 'All'
-      ? MEDIA_DATA
-      : MEDIA_DATA.filter((item) => item.category === selectedCategory);
+  const filteredMedia = MEDIA_DATA.filter((item) => item.category === selectedCategory);
 
   const renderMediaItem = ({ item }: { item: MediaItem }) => (
     <Pressable
