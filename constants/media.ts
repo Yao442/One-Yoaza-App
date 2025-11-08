@@ -157,4 +157,4 @@ export const MEDIA_DATA: MediaItem[] = [
   },
 ];
 
-export const CATEGORIES = ['All', 'Communities', 'Chiefs', 'Urban', 'Travel', 'Nature', 'Wildlife'];
+export const CATEGORIES = ['All', 'Communities', 'Chiefs', 'Travel'];
