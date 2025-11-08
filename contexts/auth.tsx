@@ -3,12 +3,31 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { encode as base64Encode, decode as base64Decode } from 'base-64';
 
+export type GhanaRegion = 
+  | "Ashanti"
+  | "Brong Ahafo"
+  | "Central"
+  | "Eastern"
+  | "Greater Accra"
+  | "Northern"
+  | "Upper East"
+  | "Upper West"
+  | "Volta"
+  | "Western"
+  | "Savannah"
+  | "Bono East"
+  | "Oti"
+  | "Ahafo"
+  | "Western North"
+  | "North East";
+
 interface User {
   id: string;
   email: string;
   firstName: string;
   lastName: string;
   gender: string;
+  subscribedRegions: GhanaRegion[];
 }
 
 interface StoredUser extends User {
@@ -41,6 +60,7 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
             firstName: foundUser.firstName,
             lastName: foundUser.lastName,
             gender: foundUser.gender,
+            subscribedRegions: foundUser.subscribedRegions || [],
           });
         }
       }
@@ -79,6 +99,7 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
         firstName: foundUser.firstName,
         lastName: foundUser.lastName,
         gender: foundUser.gender,
+        subscribedRegions: foundUser.subscribedRegions || [],
       });
       
       console.log('Login: Success');
@@ -115,6 +136,7 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
         firstName: data.firstName,
         lastName: data.lastName,
         gender: data.gender,
+        subscribedRegions: [],
       };
       
       users.push(newUser);
@@ -130,6 +152,7 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
         firstName: newUser.firstName,
         lastName: newUser.lastName,
         gender: newUser.gender,
+        subscribedRegions: [],
       });
       
       console.log('Signup: Success');
@@ -146,6 +169,34 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
     setUser(null);
   }, []);
 
+  const updateSubscribedRegions = useCallback(async (regions: GhanaRegion[]) => {
+    try {
+      if (!user) return { success: false, error: 'Not authenticated' };
+      
+      const usersData = await AsyncStorage.getItem(USERS_KEY);
+      const users: StoredUser[] = usersData ? JSON.parse(usersData) : [];
+      
+      const userIndex = users.findIndex(u => u.id === user.id);
+      if (userIndex === -1) {
+        return { success: false, error: 'User not found' };
+      }
+      
+      users[userIndex].subscribedRegions = regions;
+      await AsyncStorage.setItem(USERS_KEY, JSON.stringify(users));
+      
+      setUser({
+        ...user,
+        subscribedRegions: regions,
+      });
+      
+      console.log('Updated subscribed regions:', regions);
+      return { success: true };
+    } catch (error: any) {
+      console.error('Update regions error:', error);
+      return { success: false, error: error.message || 'Update failed' };
+    }
+  }, [user]);
+
   return useMemo(() => ({
     user,
     isLoading,
@@ -154,5 +205,6 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
     login,
     signup,
     logout,
-  }), [user, isLoading, token, login, signup, logout]);
+    updateSubscribedRegions,
+  }), [user, isLoading, token, login, signup, logout, updateSubscribedRegions]);
 });

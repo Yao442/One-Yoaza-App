@@ -1,6 +1,6 @@
 import { Stack } from 'expo-router';
-import { Camera, Heart, Settings, Video, LogOut } from 'lucide-react-native';
-import React from 'react';
+import { Camera, Heart, Settings, Video, LogOut, MapPin, Check } from 'lucide-react-native';
+import React, { useState } from 'react';
 import {
   Pressable,
   ScrollView,
@@ -8,15 +8,40 @@ import {
   Text,
   View,
   Alert,
+  Modal,
+  TouchableOpacity,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { MEDIA_DATA } from '@/constants/media';
-import { useAuth } from '@/contexts/auth';
+import { useAuth, GhanaRegion } from '@/contexts/auth';
+
+const GHANA_REGIONS: GhanaRegion[] = [
+  "Ashanti",
+  "Brong Ahafo",
+  "Central",
+  "Eastern",
+  "Greater Accra",
+  "Northern",
+  "Upper East",
+  "Upper West",
+  "Volta",
+  "Western",
+  "Savannah",
+  "Bono East",
+  "Oti",
+  "Ahafo",
+  "Western North",
+  "North East",
+];
 
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
-  const { user, logout, isLoading } = useAuth();
+  const { user, logout, isLoading, updateSubscribedRegions } = useAuth();
+  const [showRegionModal, setShowRegionModal] = useState(false);
+  const [selectedRegions, setSelectedRegions] = useState<GhanaRegion[]>(user?.subscribedRegions || []);
+  const [isSaving, setIsSaving] = useState(false);
+  
   const userVideos = MEDIA_DATA.filter((item) => item.type === 'video').length;
   const userPhotos = MEDIA_DATA.filter((item) => item.type === 'image').length;
   const totalMedia = MEDIA_DATA.length;
@@ -41,6 +66,33 @@ export default function ProfileScreen() {
         { text: 'Sign Out', style: 'destructive', onPress: logout },
       ]
     );
+  };
+
+  const toggleRegion = (region: GhanaRegion) => {
+    setSelectedRegions(prev => {
+      if (prev.includes(region)) {
+        return prev.filter(r => r !== region);
+      }
+      return [...prev, region];
+    });
+  };
+
+  const handleSaveRegions = async () => {
+    setIsSaving(true);
+    const result = await updateSubscribedRegions(selectedRegions);
+    setIsSaving(false);
+    
+    if (result.success) {
+      setShowRegionModal(false);
+      Alert.alert('Success', 'Your subscription preferences have been updated!');
+    } else {
+      Alert.alert('Error', result.error || 'Failed to update subscription');
+    }
+  };
+
+  const openRegionModal = () => {
+    setSelectedRegions(user?.subscribedRegions || []);
+    setShowRegionModal(true);
   };
 
   const stats = [
@@ -89,6 +141,26 @@ export default function ProfileScreen() {
               </View>
             ))}
           </View>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Subscription</Text>
+          
+          <Pressable style={styles.subscriptionCard} onPress={openRegionModal}>
+            <View style={[styles.actionIcon, { backgroundColor: '#10B981' }]}>
+              <MapPin size={24} color="#fff" />
+            </View>
+            <View style={styles.actionContent}>
+              <Text style={styles.actionTitle}>Regional Content</Text>
+              <Text style={styles.actionSubtitle}>
+                {user?.subscribedRegions.length === 0 
+                  ? 'Select regions to customize your content'
+                  : `${user?.subscribedRegions.length} region${user?.subscribedRegions.length === 1 ? '' : 's'} selected`
+                }
+              </Text>
+            </View>
+            <Text style={styles.chevron}>›</Text>
+          </Pressable>
         </View>
 
         <View style={styles.section}>
@@ -154,6 +226,76 @@ export default function ProfileScreen() {
 
         <Text style={styles.version}>Version 1.0.0</Text>
       </ScrollView>
+
+      <Modal
+        visible={showRegionModal}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setShowRegionModal(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={[styles.modalHeader, { paddingTop: insets.top + 16 }]}>
+            <Text style={styles.modalTitle}>Select Regions</Text>
+            <TouchableOpacity onPress={() => setShowRegionModal(false)}>
+              <Text style={styles.modalClose}>✕</Text>
+            </TouchableOpacity>
+          </View>
+
+          <ScrollView style={styles.modalContent} showsVerticalScrollIndicator={false}>
+            <Text style={styles.modalDescription}>
+              Choose the regions you&apos;re interested in to customize content in your gallery, palace, entertainment, and marketplace.
+            </Text>
+
+            <View style={styles.regionsGrid}>
+              {GHANA_REGIONS.map((region) => {
+                const isSelected = selectedRegions.includes(region);
+                return (
+                  <TouchableOpacity
+                    key={region}
+                    style={[
+                      styles.regionItem,
+                      isSelected && styles.regionItemSelected,
+                    ]}
+                    onPress={() => toggleRegion(region)}
+                  >
+                    <Text style={[
+                      styles.regionText,
+                      isSelected && styles.regionTextSelected,
+                    ]}>
+                      {region}
+                    </Text>
+                    {isSelected && (
+                      <View style={styles.checkmark}>
+                        <Check size={16} color="#fff" strokeWidth={3} />
+                      </View>
+                    )}
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </ScrollView>
+
+          <View style={[styles.modalFooter, { paddingBottom: insets.bottom + 16 }]}>
+            <View style={styles.selectionInfo}>
+              <Text style={styles.selectionCount}>
+                {selectedRegions.length} region{selectedRegions.length === 1 ? '' : 's'} selected
+              </Text>
+            </View>
+            <TouchableOpacity
+              style={[
+                styles.saveButton,
+                isSaving && styles.saveButtonDisabled,
+              ]}
+              onPress={handleSaveRegions}
+              disabled={isSaving}
+            >
+              <Text style={styles.saveButtonText}>
+                {isSaving ? 'Saving...' : 'Save Subscription'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -318,5 +460,117 @@ const styles = StyleSheet.create({
   loadingText: {
     fontSize: 16,
     color: '#999',
+  },
+  subscriptionCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#1a1a1a',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 12,
+  },
+  chevron: {
+    fontSize: 28,
+    color: '#666',
+    marginLeft: 8,
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: '#000',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#2a2a2a',
+  },
+  modalTitle: {
+    fontSize: 28,
+    fontWeight: '700' as const,
+    color: '#fff',
+  },
+  modalClose: {
+    fontSize: 32,
+    color: '#999',
+    fontWeight: '300' as const,
+  },
+  modalContent: {
+    flex: 1,
+    paddingHorizontal: 20,
+  },
+  modalDescription: {
+    fontSize: 15,
+    color: '#999',
+    lineHeight: 22,
+    marginTop: 20,
+    marginBottom: 24,
+  },
+  regionsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+    paddingBottom: 20,
+  },
+  regionItem: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 12,
+    backgroundColor: '#1a1a1a',
+    borderWidth: 2,
+    borderColor: '#2a2a2a',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  regionItemSelected: {
+    backgroundColor: '#10B981',
+    borderColor: '#10B981',
+  },
+  regionText: {
+    fontSize: 15,
+    color: '#fff',
+    fontWeight: '500' as const,
+  },
+  regionTextSelected: {
+    fontWeight: '600' as const,
+  },
+  checkmark: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalFooter: {
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#2a2a2a',
+  },
+  selectionInfo: {
+    marginBottom: 12,
+  },
+  selectionCount: {
+    fontSize: 14,
+    color: '#999',
+    textAlign: 'center',
+  },
+  saveButton: {
+    backgroundColor: '#10B981',
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  saveButtonDisabled: {
+    opacity: 0.6,
+  },
+  saveButtonText: {
+    fontSize: 17,
+    fontWeight: '600' as const,
+    color: '#fff',
   },
 });

@@ -1,3 +1,21 @@
+export type GhanaRegion = 
+  | "Ashanti"
+  | "Brong Ahafo"
+  | "Central"
+  | "Eastern"
+  | "Greater Accra"
+  | "Northern"
+  | "Upper East"
+  | "Upper West"
+  | "Volta"
+  | "Western"
+  | "Savannah"
+  | "Bono East"
+  | "Oti"
+  | "Ahafo"
+  | "Western North"
+  | "North East";
+
 export interface User {
   id: string;
   email: string;
@@ -5,6 +23,7 @@ export interface User {
   lastName: string;
   gender: "male" | "female";
   password: string;
+  subscribedRegions: GhanaRegion[];
   createdAt: string;
   updatedAt: string;
 }
@@ -17,6 +36,7 @@ export const createTables = `
     lastName TEXT NOT NULL,
     gender TEXT NOT NULL CHECK (gender IN ('male', 'female')),
     password TEXT NOT NULL,
+    subscribedRegions TEXT NOT NULL DEFAULT '[]',
     createdAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updatedAt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
   );
