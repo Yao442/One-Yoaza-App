@@ -1,5 +1,5 @@
 import { Stack } from 'expo-router';
-import { Radio, Tv, Music2 } from 'lucide-react-native';
+import { Radio, Tv, Music2, Search, Library } from 'lucide-react-native';
 import React, { useState } from 'react';
 import {
   Platform,
@@ -41,7 +41,18 @@ export default function EntertainmentScreen() {
       />
 
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Entertainment</Text>
+        <View style={styles.headerTop}>
+          <Text style={styles.headerTitle}>Entertainment</Text>
+          <View style={styles.headerIcons}>
+            <Pressable style={styles.iconButton}>
+              <Search size={24} color="#fff" strokeWidth={2} />
+            </Pressable>
+          </View>
+        </View>
+        <Pressable style={styles.libraryButton}>
+          <Library size={20} color="#fff" strokeWidth={2} />
+          <Text style={styles.libraryText}>Your Library</Text>
+        </Pressable>
       </View>
 
       <ScrollView
@@ -142,11 +153,38 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING,
     paddingBottom: 12,
   },
+  headerTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
   headerTitle: {
     fontSize: 34,
     fontWeight: '700' as const,
     color: '#fff',
     letterSpacing: -0.5,
+  },
+  headerIcons: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  iconButton: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  libraryButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingVertical: 8,
+  },
+  libraryText: {
+    fontSize: 16,
+    fontWeight: '600' as const,
+    color: '#fff',
   },
   tabsScrollView: {
     flexGrow: 0,
