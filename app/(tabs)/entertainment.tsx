@@ -42,14 +42,7 @@ export default function EntertainmentScreen() {
       />
 
       <View style={styles.header}>
-        <View style={styles.headerTop}>
-          <Text style={styles.headerTitle}>Entertainment</Text>
-          <View style={styles.headerIcons}>
-            <Pressable style={styles.iconButton}>
-              <Search size={24} color="#fff" strokeWidth={2} />
-            </Pressable>
-          </View>
-        </View>
+        <Text style={styles.headerTitle}>Entertainment</Text>
       </View>
 
       <ScrollView
@@ -77,6 +70,9 @@ export default function EntertainmentScreen() {
             </Text>
           </Pressable>
         ))}
+        <Pressable style={styles.searchButton}>
+          <Search size={20} color="#fff" strokeWidth={2} />
+        </Pressable>
       </ScrollView>
 
       <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
@@ -159,27 +155,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING,
     paddingBottom: 12,
   },
-  headerTop: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
   headerTitle: {
     fontSize: 34,
     fontWeight: '700' as const,
     color: '#fff',
     letterSpacing: -0.5,
-  },
-  headerIcons: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  iconButton: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 
   tabsScrollView: {
@@ -206,6 +186,14 @@ const styles = StyleSheet.create({
   },
   tabTextActive: {
     color: '#000',
+  },
+  searchButton: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#1a1a1a',
+    borderRadius: 20,
   },
   content: {
     flex: 1,
