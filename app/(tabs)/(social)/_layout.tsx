@@ -31,18 +31,6 @@ export default function SocialLayout() {
           title: 'Communities',
         }}
       />
-      <MaterialTopTabs.Screen
-        name="festivals"
-        options={{
-          title: 'Festivals',
-        }}
-      />
-      <MaterialTopTabs.Screen
-        name="culture"
-        options={{
-          title: 'Culture',
-        }}
-      />
     </MaterialTopTabs>
   );
 }
