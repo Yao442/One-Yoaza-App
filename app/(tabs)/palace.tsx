@@ -20,7 +20,7 @@ const COLUMN_COUNT = 2;
 const SPACING = 12;
 const ITEM_SIZE = (width - SPACING * (COLUMN_COUNT + 1)) / COLUMN_COUNT;
 
-type TabType = 'Palace' | 'Festivals' | 'History' | 'Heritage' | 'The King';
+type TabType = 'Palace' | 'Festivals' | 'History' | 'Heritage' | 'The King' | 'Chiefs';
 
 const TABS: { id: TabType; title: string }[] = [
   { id: 'Palace', title: 'Palace' },
@@ -28,6 +28,7 @@ const TABS: { id: TabType; title: string }[] = [
   { id: 'History', title: 'History' },
   { id: 'Heritage', title: 'Heritage' },
   { id: 'The King', title: 'The King' },
+  { id: 'Chiefs', title: 'Chiefs' },
 ];
 
 export default function PalaceScreen() {
